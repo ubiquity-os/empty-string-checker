@@ -3,14 +3,9 @@ import { Octokit } from "@octokit/rest";
 import simpleGit from "simple-git";
 
 const token = process.env.GITHUB_TOKEN;
-const [owner, repo] = process.env.GITHUB_REPOSITORY?.split("/") ?? [];
-const pullNumber = process.env.GITHUB_PR_NUMBER ?? process.env.PULL_REQUEST_NUMBER ?? "0";
+const [owner, repo] = process.env.GITHUB_REPOSITORY?.split("/") || [];
+const pullNumber = process.env.GITHUB_PR_NUMBER || process.env.PULL_REQUEST_NUMBER || "0";
 const baseRef = process.env.GITHUB_BASE_REF;
-const excludedFiles: string[] = process.env.EXCLUDED_FILES
-  ? process.env.EXCLUDED_FILES.split("\n")
-      .map((file) => file.trim())
-      .filter(Boolean)
-  : [];
 
 if (!token || !owner || !repo || pullNumber === "0" || !baseRef) {
   core.setFailed("Missing required environment variables.");
@@ -39,12 +34,9 @@ async function main() {
     const violations = parseDiffForEmptyStrings(diff);
 
     if (violations.length > 0) {
-      violations.forEach(({ file, line }) => {
+      violations.forEach(({ file, line, content }) => {
         core.warning(
-          `Detected an empty string in ${file} L:${line}.
-
-If this is during variable initialization, consider using a different approach.
-For more information, visit: https://www.github.com/ubiquity/ts-template/issues/31`,
+          "Detected an empty string.\n\nIf this is during variable initialization, consider using a different approach.\nFor more information, visit: https://www.github.com/ubiquity/ts-template/issues/31",
           {
             file,
             startLine: line,
@@ -82,38 +74,47 @@ For more information, visit: https://www.github.com/ubiquity/ts-template/issues/
   }
 }
 
-export function parseDiffForEmptyStrings(diff: string, excluded: string[] = excludedFiles) {
+function parseDiffForEmptyStrings(diff: string) {
   const violations: Array<{ file: string; line: number; content: string }> = [];
   const diffLines = diff.split("\n");
 
   let currentFile: string;
   let headLine = 0;
-  let isInHunk = false;
+  let inHunk = false;
 
   diffLines.forEach((line) => {
-    if (isHunkHeader(line)) {
-      headLine = getHunkHeaderLine(line);
-      isInHunk = true;
+    const hunkHeaderMatch = /^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/.exec(line);
+    if (hunkHeaderMatch) {
+      headLine = parseInt(hunkHeaderMatch[1], 10);
+      inHunk = true;
       return;
     }
 
-    if (isFileHeader(line)) {
+    if (line.startsWith("--- a/") || line.startsWith("+++ b/")) {
       currentFile = line.slice(6);
-      isInHunk = false;
+      inHunk = false;
       return;
     }
 
-    if (shouldSkipFile(currentFile)) {
+    // Only process TypeScript files
+    if (!currentFile?.endsWith(".ts")) {
       return;
     }
 
-    if (isInHunk && line.startsWith("+")) {
-      if (isEmptyStringViolation(line)) {
-        violations.push({
-          file: currentFile,
-          line: headLine,
-          content: line.substring(1).trim(),
-        });
+    if (inHunk && line.startsWith("+")) {
+      // Check for empty strings in TypeScript syntax
+      if (/^\+.*""/.test(line)) {
+        // Ignore empty strings in comments
+        if (!line.trim().startsWith("//") && !line.trim().startsWith("*")) {
+          // Ignore empty strings in template literals
+          if (!/`[^`]*\$\{[^}]*\}[^`]*`/.test(line)) {
+            violations.push({
+              file: currentFile,
+              line: headLine,
+              content: line.substring(1).trim(),
+            });
+          }
+        }
       }
       headLine++;
     } else if (!line.startsWith("-")) {
@@ -121,35 +122,8 @@ export function parseDiffForEmptyStrings(diff: string, excluded: string[] = excl
     }
   });
 
-  function isHunkHeader(line: string) {
-    return /^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/.test(line);
-  }
-
-  function getHunkHeaderLine(line: string) {
-    const match = /^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/.exec(line);
-    return match ? parseInt(match[1], 10) : 0;
-  }
-
-  function isFileHeader(line: string) {
-    return line.startsWith("--- a/") || line.startsWith("+++ b/");
-  }
-
-  function shouldSkipFile(file?: string) {
-    if (!file) return true;
-    if (excluded.includes(file)) return true;
-    return !file.endsWith(".ts");
-  }
-
-  function isEmptyStringViolation(line: string) {
-    if (!/^\+.*""/.test(line)) return false;
-    const content = line.substring(1).trim();
-    if (content.startsWith("//") || content.startsWith("*")) return false;
-    return !/`[^`]*\$\{[^}]*\}[^`]*`/.test(content);
-  }
-
   return violations;
 }
-
 main().catch((error) => {
   core.setFailed(`Error running empty string check: ${error instanceof Error ? error.message : String(error)}`);
 });
