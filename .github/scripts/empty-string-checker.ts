@@ -77,7 +77,7 @@ For more information, visit: https://www.github.com/ubiquity/ts-template/issues/
   }
 }
 
-function parseDiffForEmptyStrings(diff: string) {
+export function parseDiffForEmptyStrings(diff: string) {
   const violations: Array<{ file: string; line: number; content: string }> = [];
   const diffLines = diff.split("\n");
 

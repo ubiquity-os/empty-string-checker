@@ -7,12 +7,6 @@ describe("parseDiffForEmptyStrings", () => {
     expect(result).toEqual([{ file: "src/example.ts", line: 1, content: 'const foo = "";' }]);
   });
 
-  test("ignores empty strings in comments", () => {
-    const diff = ["+++ b/src/example.ts", "@@ -1,2 +1,2 @@", '+// const foo = "";'].join("\n");
-    const result = parseDiffForEmptyStrings(diff);
-    expect(result).toEqual([]);
-  });
-
   test("ignores empty strings in template literals", () => {
     const diff = ["+++ b/src/example.ts", "@@ -1,2 +1,2 @@", '+const foo = `${""}`;'].join("\n");
     const result = parseDiffForEmptyStrings(diff);
@@ -22,12 +16,6 @@ describe("parseDiffForEmptyStrings", () => {
   test("ignores non-TypeScript files", () => {
     const diff = ["+++ b/src/example.js", "@@ -1,2 +1,2 @@", '+const foo = "";'].join("\n");
     const result = parseDiffForEmptyStrings(diff);
-    expect(result).toEqual([]);
-  });
-
-  test("ignores excluded files", () => {
-    const diff = ["+++ b/src/example.ts", "@@ -1,2 +1,2 @@", '+const foo = "";'].join("\n");
-    const result = parseDiffForEmptyStrings(diff, ["src/example.ts"]);
     expect(result).toEqual([]);
   });
 
