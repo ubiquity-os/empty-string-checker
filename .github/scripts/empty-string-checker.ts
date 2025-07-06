@@ -4,7 +4,7 @@ import simpleGit from "simple-git";
 
 const token = process.env.GITHUB_TOKEN;
 const [owner, repo] = process.env.GITHUB_REPOSITORY?.split("/") || [];
-const pullNumber = process.env.GITHUB_PR_NUMBER || process.env.PULL_REQUEST_NUMBER || "0";
+const pullNumber = process.env.GITHUB_PR_NUMBER ?? process.env.PULL_REQUEST_NUMBER ?? "0";
 const baseRef = process.env.GITHUB_BASE_REF;
 
 if (!token || !owner || !repo || pullNumber === "0" || !baseRef) {
@@ -34,9 +34,12 @@ async function main() {
     const violations = parseDiffForEmptyStrings(diff);
 
     if (violations.length > 0) {
-      violations.forEach(({ file, line, content }) => {
+      violations.forEach(({ file, line }) => {
         core.warning(
-          "Detected an empty string.\n\nIf this is during variable initialization, consider using a different approach.\nFor more information, visit: https://www.github.com/ubiquity/ts-template/issues/31",
+          `Detected an empty string in ${file} L${line}.
+
+If this is during variable initialization, consider using a different approach.
+For more information, visit: https://www.github.com/ubiquity/ts-template/issues/31`,
           {
             file,
             startLine: line,
@@ -80,19 +83,19 @@ function parseDiffForEmptyStrings(diff: string) {
 
   let currentFile: string;
   let headLine = 0;
-  let inHunk = false;
+  let isHunk = false;
 
   diffLines.forEach((line) => {
     const hunkHeaderMatch = /^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/.exec(line);
     if (hunkHeaderMatch) {
       headLine = parseInt(hunkHeaderMatch[1], 10);
-      inHunk = true;
+      isHunk = true;
       return;
     }
 
     if (line.startsWith("--- a/") || line.startsWith("+++ b/")) {
       currentFile = line.slice(6);
-      inHunk = false;
+      isHunk = false;
       return;
     }
 
@@ -101,7 +104,7 @@ function parseDiffForEmptyStrings(diff: string) {
       return;
     }
 
-    if (inHunk && line.startsWith("+")) {
+    if (isHunk && line.startsWith("+")) {
       // Check for empty strings in TypeScript syntax
       if (/^\+.*""/.test(line)) {
         // Ignore empty strings in comments
