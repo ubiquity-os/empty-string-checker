@@ -41,7 +41,10 @@ async function main() {
     if (violations.length > 0) {
       violations.forEach(({ file, line }) => {
         core.warning(
-          "Detected an empty string.\n\nIf this is during variable initialization, consider using a different approach.\nFor more information, visit: https://www.github.com/ubiquity/ts-template/issues/31",
+          `Detected an empty string in ${file} L:${line}.
+
+If this is during variable initialization, consider using a different approach.
+For more information, visit: https://www.github.com/ubiquity/ts-template/issues/31`,
           {
             file,
             startLine: line,
