@@ -3,8 +3,8 @@ import { Octokit } from "@octokit/rest";
 import simpleGit from "simple-git";
 
 const token = process.env.GITHUB_TOKEN;
-const [owner, repo] = process.env.GITHUB_REPOSITORY?.split("/") || [];
-const pullNumber = process.env.GITHUB_PR_NUMBER || process.env.PULL_REQUEST_NUMBER || "0";
+const [owner, repo] = process.env.GITHUB_REPOSITORY?.split("/") ?? [];
+const pullNumber = process.env.GITHUB_PR_NUMBER ?? process.env.PULL_REQUEST_NUMBER ?? "0";
 const baseRef = process.env.GITHUB_BASE_REF;
 const excludedFiles: string[] = process.env.EXCLUDED_FILES
   ? process.env.EXCLUDED_FILES.split("\n")
@@ -39,7 +39,7 @@ async function main() {
     const violations = parseDiffForEmptyStrings(diff);
 
     if (violations.length > 0) {
-      violations.forEach(({ file, line, content }) => {
+      violations.forEach(({ file, line }) => {
         core.warning(
           "Detected an empty string.\n\nIf this is during variable initialization, consider using a different approach.\nFor more information, visit: https://www.github.com/ubiquity/ts-template/issues/31",
           {
@@ -85,52 +85,63 @@ function parseDiffForEmptyStrings(diff: string) {
 
   let currentFile: string;
   let headLine = 0;
-  let inHunk = false;
+  let isInHunk = false;
 
   diffLines.forEach((line) => {
-    const hunkHeaderMatch = /^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/.exec(line);
-    if (hunkHeaderMatch) {
-      headLine = parseInt(hunkHeaderMatch[1], 10);
-      inHunk = true;
+    if (isHunkHeader(line)) {
+      headLine = getHunkHeaderLine(line);
+      isInHunk = true;
       return;
     }
 
-    if (line.startsWith("--- a/") || line.startsWith("+++ b/")) {
+    if (isFileHeader(line)) {
       currentFile = line.slice(6);
-      inHunk = false;
+      isInHunk = false;
       return;
     }
 
-    // Skip files in excludedFiles
-    if (excludedFiles.includes(currentFile)) {
+    if (shouldSkipFile(currentFile)) {
       return;
     }
 
-    // Only process TypeScript files
-    if (!currentFile?.endsWith(".ts")) {
-      return;
-    }
-
-    if (inHunk && line.startsWith("+")) {
-      // Check for empty strings in TypeScript syntax
-      if (/^\+.*""/.test(line)) {
-        // Ignore empty strings in comments
-        if (!line.trim().startsWith("//") && !line.trim().startsWith("*")) {
-          // Ignore empty strings in template literals
-          if (!/`[^`]*\$\{[^}]*\}[^`]*`/.test(line)) {
-            violations.push({
-              file: currentFile,
-              line: headLine,
-              content: line.substring(1).trim(),
-            });
-          }
-        }
+    if (isInHunk && line.startsWith("+")) {
+      if (isEmptyStringViolation(line)) {
+        violations.push({
+          file: currentFile,
+          line: headLine,
+          content: line.substring(1).trim(),
+        });
       }
       headLine++;
     } else if (!line.startsWith("-")) {
       headLine++;
     }
   });
+
+  function isHunkHeader(line: string) {
+    return /^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/.test(line);
+  }
+
+  function getHunkHeaderLine(line: string) {
+    const match = /^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/.exec(line);
+    return match ? parseInt(match[1], 10) : 0;
+  }
+
+  function isFileHeader(line: string) {
+    return line.startsWith("--- a/") || line.startsWith("+++ b/");
+  }
+
+  function shouldSkipFile(file?: string) {
+    if (!file) return true;
+    if (excludedFiles.includes(file)) return true;
+    return !file.endsWith(".ts");
+  }
+
+  function isEmptyStringViolation(line: string) {
+    if (!/^\+.*""/.test(line)) return false;
+    if (line.trim().startsWith("//") || line.trim().startsWith("*")) return false;
+    return !/`[^`]*\$\{[^}]*\}[^`]*`/.test(line);
+  }
 
   return violations;
 }
