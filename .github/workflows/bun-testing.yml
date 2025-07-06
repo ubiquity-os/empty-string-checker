@@ -1,4 +1,4 @@
-name: Run Jest testing suite
+name: Run Bun Testing Suite
 on:
   workflow_dispatch:
   pull_request:
@@ -18,9 +18,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Jest With Coverage
+      - name: Bun Test Suite
+        env:
+          GITHUB_TOKEN: dummy
+          GITHUB_REPOSITORY: owner/repo
+          GITHUB_PR_NUMBER: 1
+          GITHUB_BASE_REF: main
+          EXCLUDED_FILES: ""
         run: bun install --frozen-lockfile && bun run test
 
-      - name: Add Jest Report to Summary
+      - name: Add Test Report to Summary
         if: always()
         run: echo "$(cat test-dashboard.md)" >> $GITHUB_STEP_SUMMARY

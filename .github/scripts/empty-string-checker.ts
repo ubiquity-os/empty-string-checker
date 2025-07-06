@@ -79,7 +79,7 @@ async function main() {
   }
 }
 
-function parseDiffForEmptyStrings(diff: string) {
+export function parseDiffForEmptyStrings(diff: string, excluded: string[] = excludedFiles) {
   const violations: Array<{ file: string; line: number; content: string }> = [];
   const diffLines = diff.split("\n");
 
@@ -133,18 +133,20 @@ function parseDiffForEmptyStrings(diff: string) {
 
   function shouldSkipFile(file?: string) {
     if (!file) return true;
-    if (excludedFiles.includes(file)) return true;
+    if (excluded.includes(file)) return true;
     return !file.endsWith(".ts");
   }
 
   function isEmptyStringViolation(line: string) {
     if (!/^\+.*""/.test(line)) return false;
-    if (line.trim().startsWith("//") || line.trim().startsWith("*")) return false;
-    return !/`[^`]*\$\{[^}]*\}[^`]*`/.test(line);
+    const content = line.substring(1).trim();
+    if (content.startsWith("//") || content.startsWith("*")) return false;
+    return !/`[^`]*\$\{[^}]*\}[^`]*`/.test(content);
   }
 
   return violations;
 }
+
 main().catch((error) => {
   core.setFailed(`Error running empty string check: ${error instanceof Error ? error.message : String(error)}`);
 });
