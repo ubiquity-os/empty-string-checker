@@ -128,7 +128,6 @@ const rule = createRule<Options, MessageIds>({
       const value = text;
 
       if (options.ignoreZeroWidth === true && isZeroWidthOnly(value)) {
-        context.report({ node, messageId: "emptyStringNotAllowed" });
         return;
       }
 
@@ -145,6 +144,9 @@ const rule = createRule<Options, MessageIds>({
     return {
       Literal: function onLiteral(node: TSESTree.Literal & { parent?: TSESTree.Node }) {
         if (typeof node.value !== "string") {
+          return;
+        }
+        if (node.parent && node.parent.type === "JSXAttribute") {
           return;
         }
         reportIfEmpty(String(node.value), node);
