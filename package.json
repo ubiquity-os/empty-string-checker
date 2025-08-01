@@ -3,7 +3,7 @@
   "name": "@ubiquity-os/eslint-plugin-empty-string-checker",
   "version": "0.1.0",
   "description": "ESLint rule to disallow empty string literals in runtime/value contexts for TypeScript and JSX/TSX.",
-  "main": "rules/index.ts",
+  "main": "src/index.ts",
   "author": "Ubiquity DAO",
   "license": "MIT",
   "engines": {
@@ -30,21 +30,12 @@
   ],
   "dependencies": {},
   "devDependencies": {
-    "@actions/core": "^1.11.1",
-    "@commitlint/cli": "^18.6.1",
-    "@commitlint/config-conventional": "^18.6.3",
     "@cspell/dict-node": "^4.0.3",
     "@cspell/dict-software-terms": "^3.4.10",
     "@cspell/dict-typescript": "^3.2.0",
-    "@eslint/eslintrc": "^3.3.1",
-    "@jest/globals": "29.7.0",
-    "@mswjs/data": "0.16.1",
-    "@octokit/rest": "^22.0.0",
     "@types/bun": "latest",
-    "@types/jest": "29.5.12",
     "@types/node": "^20.17.23",
-    "@types/xmldom": "^0.1.34",
-    "@typescript-eslint/parser": "^8.38.0",
+    "@typescript-eslint/types": "^8.38.0",
     "@typescript-eslint/utils": "^8.38.0",
     "cspell": "^8.17.5",
     "esbuild": "^0.20.2",
@@ -52,15 +43,10 @@
     "eslint-plugin-check-file": "^3.3.0",
     "eslint-plugin-sonarjs": "^3.0.4",
     "husky": "^9.1.7",
-    "jest": "29.7.0",
-    "jest-junit": "16.0.0",
-    "jest-md-dashboard": "0.8.0",
     "knip": "^5.45.0",
     "lint-staged": "^15.4.3",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.5.3",
-    "ts-jest": "29.1.2",
-    "tsx": "^4.19.3",
     "typescript": "^5.8.2",
     "typescript-eslint": "^8.38.0"
   },
@@ -79,10 +65,10 @@
     ]
   },
   "exports": {
-    ".": "./rules/index.ts"
+    ".": "./src/index.ts"
   },
   "files": [
-    "rules",
+    "src",
     "README.md"
   ]
 }

@@ -1,5 +1,5 @@
 import { RuleTester } from "eslint";
-import rule from "../rules/empty-string-checker";
+import rule from "../src/empty-string-checker";
 
 import tsParser from "@typescript-eslint/parser";
 

@@ -27,12 +27,15 @@ export default tsEslint.config([
       "ubiquity-os": plugin,
     },
     rules: {
-      "ubiquity-os/empty-string-checker": ["error", {
-        checkWhitespaceOnly: false,
-        checkNoSubstitutionTemplates: true,
-        ignoreZeroWidth: false,
-        allowContexts: []
-      }],
+      "ubiquity-os/empty-string-checker": [
+        "error",
+        {
+          checkWhitespaceOnly: false,
+          checkNoSubstitutionTemplates: true,
+          ignoreZeroWidth: false,
+          allowContexts: [],
+        },
+      ],
     },
   },
 ]);
@@ -45,24 +48,29 @@ Rule key: `ubiquity-os/empty-string-checker`
 All options are optional. Defaults shown.
 
 - `checkWhitespaceOnly` (boolean, default `false`)
+
   - When `true`, whitespace-only strings (e.g., `"   "`) are also reported.
 
 - `checkNoSubstitutionTemplates` (boolean, default `true`)
+
   - When `true`, empty no-substitution template literals (``````) are reported.
 
 - `ignoreZeroWidth` (boolean, default `false`)
+
   - When `true`, strings consisting only of zero-width characters (e.g., `\u200B`, `\u200C`, `\u200D`, `\u200E`, `\u200F`, `\uFEFF`) are ignored.
 
 - `allowContexts` (string[], default `[]`)
   - Array of AST node types in whose context empty strings should be allowed. Any ancestor node type matching an entry will allow the empty string.
 
 Notes:
+
 - Type-only positions (e.g., `type A = ""`) and import/export specifiers are not reported.
 - JSX attribute expressions like `<Comp title={expr} />` are not reported; string literal attributes like `<Comp title="" />` are reported.
 
 ## Examples
 
 Valid:
+
 ```ts
 const a = "x";
 const a = `${x}`;
@@ -71,6 +79,7 @@ type A = "";
 ```
 
 Invalid:
+
 ```ts
 const a = "";
 const a = myString ?? '';
@@ -80,6 +89,7 @@ const a = ``; // when checkNoSubstitutionTemplates: true
 ```
 
 With `checkWhitespaceOnly: true`:
+
 ```ts
 const a = "   "; // invalid
 ```
