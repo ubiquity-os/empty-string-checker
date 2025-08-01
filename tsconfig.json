@@ -101,8 +101,6 @@
   },
   "include": [
     "**/*.ts",
-    ".github/scripts/empty-string-checker.ts",
-    "eslint.config.mjs",
-    ".github/scripts/empty-string-checker.test.ts"
+    "eslint.config.mjs"
   ]
 }
