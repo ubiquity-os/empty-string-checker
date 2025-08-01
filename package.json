@@ -30,6 +30,8 @@
   ],
   "dependencies": {},
   "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
     "@cspell/dict-node": "^4.0.3",
     "@cspell/dict-software-terms": "^3.4.10",
     "@cspell/dict-typescript": "^3.2.0",
