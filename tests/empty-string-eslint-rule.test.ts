@@ -24,6 +24,14 @@ tester.run("ubiquity-os/empty-string-checker", rule as never, {
   ],
   invalid: [
     {
+      code: "const a = myString ?? '';",
+      errors: [{ messageId: "emptyStringNotAllowed" }],
+    },
+    {
+      code: "const a = myString ? myString : '';",
+      errors: [{ messageId: "emptyStringNotAllowed" }],
+    },
+    {
       code: 'const a = "";',
       errors: [{ messageId: "emptyStringNotAllowed" }],
     },
