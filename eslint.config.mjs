@@ -1,8 +1,8 @@
 // @ts-check
 import eslint from "@eslint/js";
-import tsEslint from "typescript-eslint";
-import sonarjs from "eslint-plugin-sonarjs";
 import checkFile from "eslint-plugin-check-file";
+import sonarjs from "eslint-plugin-sonarjs";
+import tsEslint from "typescript-eslint";
 
 export default tsEslint.config([
   { ignores: ["**/*.js", ".github/**.ts", "!.github/scripts/**.ts"] },
@@ -21,6 +21,7 @@ export default tsEslint.config([
       },
     },
     rules: {
+      "sonarjs/no-empty-test-file": "off",
       "check-file/filename-naming-convention": [
         "error",
         {
