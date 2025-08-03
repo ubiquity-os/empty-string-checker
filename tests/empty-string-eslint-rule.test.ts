@@ -1,7 +1,6 @@
-import { RuleTester } from "eslint";
-import rule from "../src/empty-string-checker";
-
 import tsParser from "@typescript-eslint/parser";
+import { RuleTester } from "@typescript-eslint/rule-tester";
+import rule from "../src/empty-string-checker";
 
 const tester = new RuleTester({
   languageOptions: {
