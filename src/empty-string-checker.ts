@@ -12,9 +12,7 @@ type Options = [
 
 type MessageIds = "emptyStringNotAllowed";
 
-const createRule = ESLintUtils.RuleCreator(function getDocsUrl(name: string): string {
-  return `https://github.com/ubiquity-os/empty-string-checker/docs/rules/${name}`;
-});
+const createRule = ESLintUtils.RuleCreator((name) => `https://github.com/ubiquity-os/empty-string-checker/docs/rules/${name}`);
 
 function isZeroWidthOnly(text: string): boolean {
   // Common zero-width characters: BOM/ZWNBSP (FEFF), ZWSP (200B), ZWNJ (200C), ZWJ (200D)
@@ -142,7 +140,7 @@ const rule = createRule<Options, MessageIds>({
     }
 
     return {
-      Literal: function onLiteral(node: TSESTree.Literal & { parent?: TSESTree.Node }) {
+      Literal: function onLiteral(node: TSESTree.Literal) {
         if (typeof node.value !== "string") {
           return;
         }
@@ -152,7 +150,7 @@ const rule = createRule<Options, MessageIds>({
         reportIfEmpty(String(node.value), node);
       },
 
-      TemplateLiteral: function onTemplateLiteral(node: TSESTree.TemplateLiteral & { parent?: TSESTree.Node }) {
+      TemplateLiteral: function onTemplateLiteral(node: TSESTree.TemplateLiteral) {
         // Ignore templates with expressions; they are dynamic values
         if (node.expressions && node.expressions.length > 0) {
           return;
@@ -170,7 +168,7 @@ const rule = createRule<Options, MessageIds>({
         reportIfEmpty(cooked, node);
       },
 
-      JSXAttribute: function onJsxAttribute(node: TSESTree.JSXAttribute & { parent?: TSESTree.Node }) {
+      JSXAttribute: function onJsxAttribute(node: TSESTree.JSXAttribute) {
         if (!node.value) {
           return;
         }

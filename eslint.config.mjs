@@ -5,7 +5,7 @@ import sonarjs from "eslint-plugin-sonarjs";
 import tsEslint from "typescript-eslint";
 
 export default tsEslint.config([
-  { ignores: ["**/*.js", ".github/**.ts", "!.github/scripts/**.ts"] },
+  { ignores: ["**/*.js", ".github/**.ts", "!.github/scripts/**.ts", "dist/**"] },
   {
     plugins: {
       "@typescript-eslint": tsEslint.plugin,
@@ -58,6 +58,7 @@ export default tsEslint.config([
       "sonarjs/no-element-overwrite": "error",
       "sonarjs/no-identical-conditions": "error",
       "sonarjs/no-identical-expressions": "error",
+      "@ubiquity-os/empty-string-checker": "warn",
       "@typescript-eslint/naming-convention": [
         "error",
         {

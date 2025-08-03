@@ -3,7 +3,8 @@
   "name": "@ubiquity-os/eslint-plugin-empty-string-checker",
   "version": "0.1.0",
   "description": "ESLint rule to disallow empty string literals in runtime/value contexts for TypeScript and JSX/TSX.",
-  "main": "dist/index.js",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Ubiquity DAO",
   "license": "MIT",
@@ -46,6 +47,7 @@
     "@cspell/dict-node": "^4.0.3",
     "@cspell/dict-software-terms": "^3.4.10",
     "@cspell/dict-typescript": "^3.2.0",
+    "@eslint/js": "^9.32.0",
     "@types/bun": "latest",
     "@types/node": "^20.17.23",
     "@typescript-eslint/rule-tester": "^8.38.0",
@@ -78,7 +80,7 @@
   "exports": {
     ".": {
       "import": "./dist/index.js",
-      "require": "./dist/index.js",
+      "require": "./dist/index.cjs",
       "types": "./dist/index.d.ts"
     }
   },

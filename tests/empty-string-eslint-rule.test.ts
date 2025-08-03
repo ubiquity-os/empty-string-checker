@@ -1,12 +1,13 @@
 import tsParser from "@typescript-eslint/parser";
-import { RuleTester } from "@typescript-eslint/rule-tester";
+import { RuleTester } from "eslint";
 import rule from "../src/empty-string-checker";
+
 
 const tester = new RuleTester({
   languageOptions: {
     ecmaVersion: 2022,
     sourceType: "module",
-    parser: tsParser as unknown as import("eslint").Linter.Parser,
+    parser: tsParser,
     parserOptions: {
       ecmaFeatures: { jsx: true },
       project: false,
