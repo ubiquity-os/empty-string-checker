@@ -64,8 +64,6 @@ function isImportOrExportSpecifier(node: TSESTree.Node | null): boolean {
   return false;
 }
 
-/* removed unused getTopContextType */
-
 function shouldSkipByAllowedContexts(node: TSESTree.Node, allowContexts: string[] | undefined): boolean {
   if (!allowContexts || allowContexts.length === 0) {
     return false;
