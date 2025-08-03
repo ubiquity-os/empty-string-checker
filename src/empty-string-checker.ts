@@ -44,7 +44,7 @@ function isTypePosition(node: TSESTree.Node | null): boolean {
     ) {
       return true;
     }
-    node = (node as unknown as { parent?: TSESTree.Node }).parent ?? null;
+    node = node.parent ?? null;
   }
   return false;
 }
@@ -59,7 +59,7 @@ function isImportOrExportSpecifier(node: TSESTree.Node | null): boolean {
     ) {
       return true;
     }
-    node = (node as unknown as { parent?: TSESTree.Node }).parent ?? null;
+    node = node.parent ?? null;
   }
   return false;
 }
@@ -73,7 +73,7 @@ function shouldSkipByAllowedContexts(node: TSESTree.Node, allowContexts: string[
     if (allowContexts.indexOf(cursor.type) !== -1) {
       return true;
     }
-    cursor = (cursor as unknown as { parent?: TSESTree.Node }).parent ?? null;
+    cursor = cursor.parent ?? null;
   }
   return false;
 }
