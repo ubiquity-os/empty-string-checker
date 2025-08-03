@@ -3,7 +3,8 @@
   "name": "@ubiquity-os/eslint-plugin-empty-string-checker",
   "version": "0.1.0",
   "description": "ESLint rule to disallow empty string literals in runtime/value contexts for TypeScript and JSX/TSX.",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "author": "Ubiquity DAO",
   "license": "MIT",
   "engines": {
@@ -11,14 +12,17 @@
     "bun": ">=1.0.0"
   },
   "scripts": {
-    "build": "bun build/esbuild-build.ts",
+    "build": "bun run clean && bun build/esbuild-build.ts && bun run build:types",
+    "build:types": "tsc --project tsconfig.build.json",
+    "clean": "rm -rf dist",
     "format": "run-s format:lint format:prettier format:cspell",
     "format:lint": "eslint --fix .",
     "format:prettier": "prettier --write .",
     "format:cspell": "cspell **/*",
     "knip": "knip --config .github/knip.ts",
     "knip-ci": "knip --no-exit-code --reporter json --config .github/knip.ts",
-    "prepare": "husky"
+    "prepare": "husky",
+    "prepublishOnly": "bun run build"
   },
   "keywords": [
     "eslint",
@@ -72,10 +76,14 @@
     ]
   },
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
   },
   "files": [
-    "src",
+    "dist",
     "README.md"
   ]
 }

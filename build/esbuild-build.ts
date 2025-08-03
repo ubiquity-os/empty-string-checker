@@ -1,18 +1,15 @@
 import esbuild, { BuildOptions } from "esbuild";
 
-const typescriptEntries = ["src/main.ts"];
-const cssEntries = ["static/style.css"];
-const entries = [...typescriptEntries, ...cssEntries];
-
-const DATA_URL_LOADERS = [".png", ".woff", ".woff2", ".eot", ".ttf", ".svg"];
-
 export const esbuildOptions: BuildOptions = {
-  sourcemap: true,
-  entryPoints: entries,
+  entryPoints: ["src/index.ts"],
   bundle: true,
-  minify: false,
-  loader: Object.fromEntries(DATA_URL_LOADERS.map((ext) => [ext, "dataurl"])),
-  outdir: "static/dist",
+  minify: true,
+  sourcemap: true,
+  platform: "node",
+  target: "node20",
+  format: "cjs",
+  outdir: "dist",
+  external: ["@typescript-eslint/utils", "@typescript-eslint/parser", "eslint", "typescript"],
 };
 
 async function runBuild() {
