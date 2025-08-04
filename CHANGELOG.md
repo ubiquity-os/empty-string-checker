@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/ubiquity-os/empty-string-checker/compare/v1.0.2...v1.0.3) (2025-08-04)
+
+
+### Bug Fixes
+
+* add .npmrc file to configure npm authentication token usage ([de5ea8f](https://github.com/ubiquity-os/empty-string-checker/commit/de5ea8fe55be1317d12a87875200e09ddc6186a6))
+
 ## [1.0.2](https://github.com/ubiquity-os/empty-string-checker/compare/v1.0.1...v1.0.2) (2025-08-04)
 
 
