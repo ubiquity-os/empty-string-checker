@@ -28,9 +28,12 @@ jobs:
       - name: Build
         run: |
           bun install --frozen-lockfile
+        env:
+          HUSKY: 0
         if: ${{ steps.release.outputs.release_created }}
 
       - run: bun publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+          HUSKY: 0
         if: ${{ steps.release.outputs.release_created }}
