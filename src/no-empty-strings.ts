@@ -12,7 +12,7 @@ type Options = [
 
 type MessageIds = "emptyStringNotAllowed";
 
-const createRule = ESLintUtils.RuleCreator((name) => `https://github.com/ubiquity-os/no-empty-string/docs/rules/${name}`);
+const createRule = ESLintUtils.RuleCreator((name) => `https://github.com/ubiquity-os/no-empty-strings/docs/rules/${name}`);
 
 function isZeroWidthOnly(text: string): boolean {
   // Common zero-width characters: BOM/ZWNBSP (FEFF), ZWSP (200B), ZWNJ (200C), ZWJ (200D)
@@ -79,7 +79,7 @@ function shouldSkipByAllowedContexts(node: TSESTree.Node, allowContexts: string[
 }
 
 const rule = createRule<Options, MessageIds>({
-  name: "no-empty-string",
+  name: "no-empty-strings",
   meta: {
     type: "problem",
     docs: {

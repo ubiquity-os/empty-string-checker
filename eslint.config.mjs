@@ -58,7 +58,7 @@ export default tsEslint.config([
       "sonarjs/no-element-overwrite": "error",
       "sonarjs/no-identical-conditions": "error",
       "sonarjs/no-identical-expressions": "error",
-      "@ubiquity-os/no-empty-string": "warn",
+      "@ubiquity-os/no-empty-strings": "warn",
       "@typescript-eslint/naming-convention": [
         "error",
         {

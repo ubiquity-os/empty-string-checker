@@ -1,6 +1,6 @@
 import tsParser from "@typescript-eslint/parser";
 import { RuleTester } from "eslint";
-import rule from "../src/no-empty-string";
+import rule from "../src/no-empty-strings";
 
 const tester = new RuleTester({
   languageOptions: {
@@ -14,7 +14,7 @@ const tester = new RuleTester({
   },
 });
 
-tester.run("ubiquity-os/no-empty-string", rule as never, {
+tester.run("ubiquity-os/no-empty-strings", rule as never, {
   valid: [
     { code: 'const a = "x";' },
     { code: "const a = `${x}`;" },
