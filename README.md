@@ -27,8 +27,8 @@ export default tsEslint.config([
       "ubiquity-os": plugin,
     },
     rules: {
-      "ubiquity-os/empty-string-checker": [
-        "error",
+      "ubiquity-os/no-empty-string": [
+        "warn",
         {
           checkWhitespaceOnly: false,
           checkNoSubstitutionTemplates: true,
@@ -41,7 +41,7 @@ export default tsEslint.config([
 ]);
 ```
 
-Rule key: `ubiquity-os/empty-string-checker`
+Rule key: `ubiquity-os/no-empty-string`
 
 ## Options
 

@@ -2,7 +2,7 @@
   "lockfileVersion": 1,
   "workspaces": {
     "": {
-      "name": "@ubiquity-os/eslint-plugin-empty-string-checker",
+      "name": "@ubiquity-os/eslint-plugin-no-empty-string",
       "dependencies": {
         "@typescript-eslint/utils": "^8.38.0",
       },

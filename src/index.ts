@@ -1,12 +1,12 @@
-import emptyStringRule from "./empty-string-checker";
+import emptyStringRule from "./no-empty-string";
 
 /**
  * ESLint plugin export under the namespace "ubiquity-os"
- * Consumers will use rule key: "ubiquity-os/empty-string-checker"
+ * Consumers will use rule key: "ubiquity-os/no-empty-string"
  */
 const plugin = {
   rules: {
-    "empty-string-checker": emptyStringRule,
+    "no-empty-string": emptyStringRule,
   },
 };
 

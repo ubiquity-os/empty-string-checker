@@ -1,6 +1,6 @@
 {
   "type": "module",
-  "name": "@ubiquity-os/eslint-plugin-empty-string-checker",
+  "name": "@ubiquity-os/eslint-plugin-no-empty-string",
   "version": "0.1.0",
   "description": "ESLint rule to disallow empty string literals in runtime/value contexts for TypeScript and JSX/TSX.",
   "main": "dist/index.cjs",
