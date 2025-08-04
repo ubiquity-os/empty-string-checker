@@ -1,23 +1,32 @@
 import esbuild, { BuildOptions } from "esbuild";
 
-const typescriptEntries = ["src/main.ts"];
-const cssEntries = ["static/style.css"];
-const entries = [...typescriptEntries, ...cssEntries];
-
-const DATA_URL_LOADERS = [".png", ".woff", ".woff2", ".eot", ".ttf", ".svg"];
-
-export const esbuildOptions: BuildOptions = {
-  sourcemap: true,
-  entryPoints: entries,
+const baseOptions: BuildOptions = {
+  entryPoints: ["src/index.ts"],
   bundle: true,
-  minify: false,
-  loader: Object.fromEntries(DATA_URL_LOADERS.map((ext) => [ext, "dataurl"])),
-  outdir: "static/dist",
+  minify: true,
+  sourcemap: true,
+  platform: "node",
+  target: "node20",
+  outdir: "dist",
+  external: ["@typescript-eslint/utils", "@typescript-eslint/parser", "eslint", "typescript"],
+};
+
+const cjsOptions: BuildOptions = {
+  ...baseOptions,
+  format: "cjs",
+  outExtension: { ".js": ".cjs" },
+};
+
+const esmOptions: BuildOptions = {
+  ...baseOptions,
+  format: "esm",
+  outExtension: { ".js": ".js" },
 };
 
 async function runBuild() {
   try {
-    await esbuild.build(esbuildOptions);
+    await esbuild.build(cjsOptions);
+    await esbuild.build(esmOptions);
     console.log("\tesbuild complete");
   } catch (err) {
     console.error(err);

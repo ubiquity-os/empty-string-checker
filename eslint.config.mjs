@@ -1,11 +1,11 @@
 // @ts-check
 import eslint from "@eslint/js";
-import tsEslint from "typescript-eslint";
-import sonarjs from "eslint-plugin-sonarjs";
 import checkFile from "eslint-plugin-check-file";
+import sonarjs from "eslint-plugin-sonarjs";
+import tsEslint from "typescript-eslint";
 
 export default tsEslint.config([
-  { ignores: ["**/*.js", ".github/**.ts", "!.github/scripts/**.ts"] },
+  { ignores: ["**/*.js", ".github/**.ts", "!.github/scripts/**.ts", "dist/**"] },
   {
     plugins: {
       "@typescript-eslint": tsEslint.plugin,
@@ -21,6 +21,7 @@ export default tsEslint.config([
       },
     },
     rules: {
+      "sonarjs/no-empty-test-file": "off",
       "check-file/filename-naming-convention": [
         "error",
         {
@@ -57,6 +58,7 @@ export default tsEslint.config([
       "sonarjs/no-element-overwrite": "error",
       "sonarjs/no-identical-conditions": "error",
       "sonarjs/no-identical-expressions": "error",
+      "@ubiquity-os/no-empty-strings": "warn",
       "@typescript-eslint/naming-convention": [
         "error",
         {
@@ -106,5 +108,5 @@ export default tsEslint.config([
         },
       ],
     },
-  }]
-);
+  },
+]);

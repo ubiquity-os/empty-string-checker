@@ -27,9 +27,4 @@ jobs:
           EXCLUDED_FILES: ""
         run: |
           bun install --frozen-lockfile
-          bun test --reporter=junit --reporter-outfile=./bun.xml
-          bun run scripts/bun-test-to-md.ts
-
-      - name: Add Test Report to Summary
-        if: always()
-        run: echo "$(cat test-dashboard.md)" >> $GITHUB_STEP_SUMMARY
+          bun test
