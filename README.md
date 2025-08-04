@@ -1,108 +1,122 @@
-# `@ubiquity/ts-template`
+# Empty String Checker (ESLint Rule)
 
-This template repository includes support for the following:
+This repository provides an ESLint rule that disallows empty string literals in runtime/value contexts for TypeScript and JSX/TSX. The rule integrates directly into your ESLint setup.
 
-- TypeScript
-- Environment Variables
-- Conventional Commits
-- Automatic deployment to Cloudflare Pages
+## Installation
 
-## Testing
-
-### Cypress
-
-To test with Cypress Studio UI, run
-
-```shell
-bun run cy:open
-```
-
-Otherwise, to simply run the tests through the console, run
-
-```shell
-bun run cy:run
-```
-
-### Jest
-
-To start Jest tests, run
-
-```shell
-bun run test
-```
-
-## Sync any repository to latest `ts-template`
-
-A bash function that can do this for you:
+Ensure you have ESLint and the TypeScript ESLint parser/utilities installed. With Bun:
 
 ```bash
-#!/bin/bash
-# shellcheck shell=bash
+bun add -d eslint @typescript-eslint/parser @typescript-eslint/utils typescript
+```
 
-get-ts-template() {
-  local branch_name
-  branch_name=$(git rev-parse --abbrev-ref HEAD)
+Then add this repository's plugin/rule to your project as appropriate (publish or local path depending on your workflow).
 
-  # Check if we're in detached HEAD state
-  if [ "$branch_name" = "HEAD" ]; then
-    echo "Error: You are in a detached HEAD state. Please checkout a branch first."
-    return 1
-  fi
+## Usage
 
-  # Create new branch for template merge
-  local merge_branch="chore/merge-${branch_name}-template"
+Extend your ESLint configuration to include the rule. Example (flat config):
 
-  # Check if template remote already exists
-  if git remote | grep -q "^template$"; then
-    echo "Template remote already exists, removing it first..."
-    git remote remove template
-  fi
+```typescript
+// eslint.config.mjs
+import tsEslint from "typescript-eslint";
+import plugin from "./rules/index.js"; // or your published package entry
 
-  echo "Adding template remote..."
-  git remote add template https://github.com/ubiquity/ts-template
+export default tsEslint.config([
+  {
+    plugins: {
+      "ubiquity-os": plugin,
+    },
+    rules: {
+      "ubiquity-os/no-empty-strings": [
+        "warn",
+        {
+          checkWhitespaceOnly: false,
+          checkNoSubstitutionTemplates: true,
+          ignoreZeroWidth: false,
+          allowContexts: [],
+        },
+      ],
+    },
+  },
+]);
+```
 
-  echo "Fetching from template..."
-  if ! git fetch template development; then
-    echo "Error: Failed to fetch from template"
-    git remote remove template
-    return 1
-  fi
+Rule key: `ubiquity-os/no-empty-strings`
 
-  echo "Setting up merge branch: ${merge_branch}"
-  # If branch exists, delete it
-  if git show-ref --verify --quiet "refs/heads/${merge_branch}"; then
-    echo "Branch ${merge_branch} already exists, deleting it..."
-    git checkout "$branch_name"
-    git branch -D "${merge_branch}"
-  fi
+## Options
 
-  # Create and checkout new branch
-  if ! git checkout -b "${merge_branch}"; then
-    echo "Error: Failed to create merge branch"
-    git remote remove template
-    return 1
-  fi
+All options are optional. Defaults shown.
 
-  echo "Merging template changes with strategy: theirs"
-  if ! git merge -X theirs template/development --no-commit --allow-unrelated-histories; then
-    echo "Error: Merge failed"
-    git merge --abort
-    git checkout "$branch_name"
-    git branch -D "${merge_branch}"
-    git remote remove template
-    return 1
-  fi
+- `checkWhitespaceOnly` (boolean, default `false`)
 
-  echo "Staging all changes for review..."
-  git add .
+  - When `true`, whitespace-only strings (e.g., `"   "`) are also reported.
 
-  echo "Success! All template changes have been merged and staged."
-  echo "You can now review the changes in VSCode."
-  echo "To apply the changes: git commit -m 'chore: merge template updates'"
-  echo "To undo: git reset --hard HEAD"
-  echo "To abort completely: git checkout $branch_name && git branch -D $merge_branch"
+- `checkNoSubstitutionTemplates` (boolean, default `true`)
 
-  # Cleanup
-  git remote remove template
-}
+  - When `true`, empty no-substitution template literals (``````) are reported.
+
+- `ignoreZeroWidth` (boolean, default `false`)
+
+  - When `true`, strings consisting only of zero-width characters (e.g., `\u200B`, `\u200C`, `\u200D`, `\u200E`, `\u200F`, `\uFEFF`) are ignored.
+
+- `allowContexts` (string[], default `[]`)
+  - Array of AST node types in whose context empty strings should be allowed. Any ancestor node type matching an entry will allow the empty string.
+
+Notes:
+
+- Type-only positions (e.g., `type A = ""`) and import/export specifiers are not reported.
+- JSX attribute expressions like `<Comp title={expr} />` are not reported; string literal attributes like `<Comp title="" />` are reported.
+
+## Examples
+
+Valid:
+
+```ts
+const a = "x";
+const a = `${x}`;
+type A = "";
+<Comp title={expr} />
+```
+
+Invalid:
+
+```ts
+const a = "";
+const a = myString ?? '';
+const a = myString ? myString : '';
+const a = ``; // when checkNoSubstitutionTemplates: true
+<Comp title=""/>
+```
+
+With `checkWhitespaceOnly: true`:
+
+```ts
+const a = "   "; // invalid
+```
+
+## Development
+
+### Prerequisites
+
+- Bun
+- TypeScript
+
+### Install dependencies
+
+```bash
+bun install
+```
+
+### Run tests
+
+```bash
+bun test
+```
+
+This runs the ESLint RuleTester-based tests in `tests/empty-string-eslint-rule.test.ts`.
+
+### Lint and format
+
+```bash
+bun run format
 ```
