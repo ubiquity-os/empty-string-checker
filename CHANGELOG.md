@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/ubiquity-os/empty-string-checker/compare/v1.0.1...v1.0.2) (2025-08-04)
+
+
+### Bug Fixes
+
+* update cleanup script to use rimraf and adjust husky preparation ([1852558](https://github.com/ubiquity-os/empty-string-checker/commit/1852558ce3b81d26de70cd3947b20e3fc200dc4c))
+
 ## [1.0.1](https://github.com/ubiquity-os/empty-string-checker/compare/v1.0.0...v1.0.1) (2025-08-04)
 
 
